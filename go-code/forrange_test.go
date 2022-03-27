@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-type Data [1024]byte
+type Packet [1024]byte
 
 func BenchmarkForStruct_test(b *testing.B) {
-	var items [1024]Data
-	var result Data
+	var items [1024]Packet
+	var result Packet
 	for i := 0; i < b.N; i++ {
 		for k := 0; k < len(items); k++ {
 			result = items[k]
@@ -18,8 +18,8 @@ func BenchmarkForStruct_test(b *testing.B) {
 }
 
 func BenchmarkRangeStruct_test(b *testing.B) {
-	var items [1024]Data
-	var result Data
+	var items [1024]Packet
+	var result Packet
 	for i := 0; i < b.N; i++ {
 		for _, item := range items {
 			result = item
@@ -29,8 +29,8 @@ func BenchmarkRangeStruct_test(b *testing.B) {
 }
 
 func BenchmarkRangeStructOptimize_test(b *testing.B) {
-	var items [1024]Data
-	var result Data
+	var items [1024]Packet
+	var result Packet
 	for i := 0; i < b.N; i++ {
 		for k, _ := range items {
 			result = items[k]
