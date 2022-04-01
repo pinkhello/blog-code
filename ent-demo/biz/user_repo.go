@@ -30,3 +30,32 @@ func QueryUser(ctx context.Context, client *entschema.Client) (*entschema.User, 
 	log.Println("user returned:", u)
 	return u, nil
 }
+
+func TxCreateUser(ctx context.Context, client *entschema.Client) error {
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		return fmt.Errorf("starting a transaction: %w", err)
+	}
+	u, err := tx.User.
+		Create().
+		SetAge(10).
+		SetName("cxq").
+		Save(ctx)
+	if err != nil {
+		return rollback(tx, err)
+	}
+	fmt.Println("create user cxq success", u)
+	i, err := tx.User.Delete().Where(user.Name("cxq")).Exec(ctx)
+	if err != nil {
+		return rollback(tx, err)
+	}
+	fmt.Println("delete user cxq success", i)
+	return tx.Commit()
+}
+
+func rollback(tx *entschema.Tx, err error) error {
+	if rerr := tx.Rollback(); rerr != nil {
+		err = fmt.Errorf("%w: %v", err, rerr)
+	}
+	return err
+}

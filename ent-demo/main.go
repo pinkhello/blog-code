@@ -30,4 +30,10 @@ func main() {
 		log.Fatalf("query user error: %v", err)
 	}
 	log.Println("查询成功:", us)
+
+	rerr := biz.TxCreateUser(context.Background(), client)
+	if rerr != nil {
+		log.Fatalf("tx create user error: %v", rerr)
+	}
+	log.Printf("事务处理成功")
 }
